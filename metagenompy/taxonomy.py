@@ -71,7 +71,11 @@ def highlight_nodes(graph, node_list, root_node='1'):
     return graph.subgraph(node_subset)
 
 
-def plot_taxonomy(graph, ax=None, label_key='scientific_name'):
+def plot_taxonomy(
+    graph,
+    ax=None, label_key='scientific_name',
+    nodes_kws=dict(), labels_kws=dict(), edges_kws=dict()
+):
     """Visualize given taxonomy."""
     # compute additional properties
     node_labels = {n: data.get(label_key, '')
