@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "metagenompy"
+version = "0.1.0"
+description = "Your all-inclusive package for aggregating and visualizing metagenomic BLAST results."
+license = "MIT"
+authors = ["kpj <kim.philipp.jablonski@gmail.com>"]
+readme = "README.md"
+repository = "https://github.com/kpj/metagenompy"
+
+[tool.poetry.dependencies]
+python = "^3.7.1"
+pandas = "^1.2.0"
+networkx = "^2.5"
+tqdm = "^4.55.1"
