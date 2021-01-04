@@ -1,3 +1,5 @@
+import itertools
+
 import pandas as pd
 
 import networkx as nx
@@ -36,6 +38,25 @@ def generate_taxonomy_network(
             graph.add_edge(parent_tax_id, tax_id)
 
     return graph
+
+
+def condense_taxonomy(
+    graph,
+    relevant_ranks=['no rank', 'kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'subspecies']
+):
+    """Contract certain edges in-place."""
+    node_data = list(graph.nodes(data=True))
+    for node, data in tqdm(node_data):
+        if data['rank'] not in relevant_ranks:
+            sources = graph.predecessors(node)
+            targets = graph.successors(node)
+
+            new_edges = [(source, target)
+                         for source, target in itertools.product(sources, targets)
+                         if source != target]
+
+            graph.add_edges_from(new_edges)
+            graph.remove_node(node)
 
 
 if __name__ == '__main__':
