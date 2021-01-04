@@ -105,3 +105,18 @@ def test_node_highlighting(taxdump):
 
     assert dict(graph_sub.nodes(data=True)) == expected_nodes
     assert list(graph_sub.edges(data=True)) == expected_edges
+
+
+def test_classification(taxdump):
+    fname_nodes, fname_names = taxdump
+    graph = metagenompy.generate_taxonomy_network(
+        fname_nodes=fname_nodes, fname_names=fname_names
+    )
+
+    assert metagenompy.classify_taxid(graph, '2', 'kingdom') == '2'
+
+    assert metagenompy.classify_taxid(graph, '20', 'kingdom') == '2'
+    assert metagenompy.classify_taxid(graph, '30', 'kingdom') == '3'
+
+    with pytest.raises(RuntimeError, match=r'.* 30 .* phylum'):
+        metagenompy.classify_taxid(graph, '30', 'phylum')

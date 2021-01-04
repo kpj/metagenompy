@@ -61,6 +61,23 @@ def condense_taxonomy(
             graph.remove_node(node)
 
 
+def classify_taxid(graph, taxid, rank):
+    """Determine name of given taxid at specified rank."""
+    node = taxid
+    while True:
+        current_rank = graph.nodes[node]['rank']
+        if current_rank == rank:
+            return node
+
+        parents = list(graph.predecessors(node))
+        assert len(parents) == 1
+
+        if node == parents[0]:
+            raise RuntimeError(f'Cannot classify {taxid} at rank {rank}')
+
+        node = parents[0]
+
+
 def highlight_nodes(graph, node_list, root_node='1'):
     """Retain only specified nodes and their paths to root."""
     node_subset = set()
