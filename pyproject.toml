@@ -13,3 +13,6 @@ pandas = "^1.2.0"
 networkx = "^2.5"
 tqdm = "^4.55.1"
 matplotlib = "^3.3.3"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.1"
