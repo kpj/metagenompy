@@ -18,12 +18,14 @@ def taxdump(tmp_path):
     fname_names = tmp_path / 'names.dmp'
     with open(fname_names, 'w') as fd:
         # tax_id, name, unique_name, name_class
-        fd.write("""1\t|\troot\t|\t\t|\tgenbank common name\t|\n""")
-        fd.write("""2\t|\tfoo2\t|\t\t|\tgenbank common name\t|\n""")
-        fd.write("""3\t|\tfoo3\t|\t\t|\tgenbank common name\t|\n""")
-        fd.write("""20\t|\tbar20\t|\t\t|\tgenbank common name\t|\n""")
-        fd.write("""30\t|\tbar30\t|\t\t|\tgenbank common name\t|\n""")
-        fd.write("""300\t|\tbaz300\t|\t\t|\tgenbank common name\t|\n""")
+        fd.write("""1\t|\troot\t|\t\t|\tcommon name\t|\n""")
+        fd.write("""2\t|\tfoo2\t|\t\t|\tcommon name\t|\n""")
+        fd.write("""3\t|\tfoo3\t|\t\t|\tcommon name\t|\n""")
+        fd.write("""20\t|\tbar20\t|\t\t|\tcommon name\t|\n""")
+        fd.write("""30\t|\tbar30\t|\t\t|\tcommon name\t|\n""")
+        fd.write("""300\t|\tbaz300\t|\t\t|\tcommon name\t|\n""")
+        fd.write("""300\t|\thui\t|\t\t|\tspecial\t|\n""")
+        fd.write("""300\t|\tbuh\t|\t\t|\tspecial\t|\n""")
 
     return fname_nodes, fname_names
 
@@ -40,7 +42,7 @@ def test_taxonomy_creation(taxdump):
         '3': {'rank': 'kingdom', 'common_name': 'foo3'},
         '20': {'rank': 'phylum', 'common_name': 'bar20'},
         '30': {'rank': 'clade', 'common_name': 'bar30'},
-        '300': {'rank': 'phylum', 'common_name': 'baz300'},
+        '300': {'rank': 'phylum', 'common_name': 'baz300', 'special': ['hui', 'buh']},
     }
     expected_edges = [
         ('1', '1', {}),
@@ -68,7 +70,7 @@ def test_taxonomy_condensation(taxdump):
         '2': {'rank': 'kingdom', 'common_name': 'foo2'},
         '3': {'rank': 'kingdom', 'common_name': 'foo3'},
         '20': {'rank': 'phylum', 'common_name': 'bar20'},
-        '300': {'rank': 'phylum', 'common_name': 'baz300'},
+        '300': {'rank': 'phylum', 'common_name': 'baz300', 'special': ['hui', 'buh']},
     }
     expected_edges = [
         ('1', '1', {}),

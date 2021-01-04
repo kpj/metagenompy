@@ -19,14 +19,20 @@ def generate_taxonomy_network(
         for line in tqdm(fd.readlines(), desc='Parsing names'):
             tax_id, name, _, class_ = line.split('\t|\t')
             class_ = class_[:-3]  # remove '\t|\n' suffix
+            class_ = class_.replace(' ', '_')
 
             if tax_id not in taxid2data:
                 taxid2data[tax_id] = {}
 
-            if class_ == 'scientific name':
-                taxid2data[tax_id]['scientific_name'] = name
-            elif class_ == 'genbank common name':
-                taxid2data[tax_id]['common_name'] = name
+            # create list of multiple names exist for same class of same taxid
+            if class_ in taxid2data[tax_id]:
+                if isinstance(taxid2data[tax_id][class_], list):
+                    taxid2data[tax_id][class_].append(name)
+                else:
+                    tmp = taxid2data[tax_id][class_]
+                    taxid2data[tax_id][class_] = [tmp, name]
+            else:
+                taxid2data[tax_id][class_] = name
 
     # create network
     graph = nx.DiGraph()

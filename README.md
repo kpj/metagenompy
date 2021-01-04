@@ -28,11 +28,11 @@ graph = metagenompy.generate_taxonomy_network()
 # print path from human to pineapple
 for node in nx.shortest_path(graph.to_undirected(as_view=True), '9606', '4615'):
     print(node, graph.nodes[node])
-## 9606 {'rank': 'species', 'scientific_name': 'Homo sapiens', 'common_name': 'human'}
-## 9605 {'rank': 'genus', 'scientific_name': 'Homo'}
+## 9606 {'rank': 'species', 'authority': 'Homo sapiens Linnaeus, 1758', 'scientific_name': 'Homo sapiens', 'genbank_common_name': 'human', 'common_name': 'man'}
+## 9605 {'rank': 'genus', 'authority': 'Homo Linnaeus, 1758', 'scientific_name': 'Homo', 'common_name': 'humans'}
 ## [..]
-## 4614 {'rank': 'genus', 'scientific_name': 'Ananas'}
-## 4615 {'rank': 'species', 'scientific_name': 'Ananas comosus', 'common_name': 'pineapple'}
+## 4614 {'rank': 'genus', 'authority': 'Ananas Mill., 1754', 'scientific_name': 'Ananas'}
+## 4615 {'rank': 'species', 'authority': ['Ananas comosus (L.) Merr., 1917', 'Ananas lucidus Mill., 1754'], 'scientific_name': 'Ananas comosus', 'synonym': ['Ananas comosus var. comosus', 'Ananas lucidus'], 'genbank_common_name': 'pineapple'}
 ```
 
 ### Easy transformation and visualization of taxonomy
