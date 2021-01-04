@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "metagenompy"
-version = "0.1.0"
+version = "0.2.0"
 description = "Your all-inclusive package for aggregating and visualizing metagenomic BLAST results."
 license = "MIT"
 authors = ["kpj <kim.philipp.jablonski@gmail.com>"]
