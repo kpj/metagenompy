@@ -59,6 +59,16 @@ def condense_taxonomy(
             graph.remove_node(node)
 
 
+def highlight_nodes(graph, node_list, root_node='1'):
+    """Retain only specified nodes and their paths to root."""
+    node_subset = set()
+    for node in node_list:
+        path = nx.shortest_path(graph, root_node, node)
+        node_subset.update(path)
+
+    return graph.subgraph(node_subset)
+
+
 if __name__ == '__main__':
     graph = generate_taxonomy_network()
 
