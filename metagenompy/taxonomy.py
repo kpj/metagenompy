@@ -88,9 +88,9 @@ def plot_taxonomy(
     if ax is None:
         ax = plt.gca()
 
-    nx.draw_networkx_nodes(graph, pos, ax=ax)
-    nx.draw_networkx_labels(graph, pos, labels=node_labels, ax=ax)
-    nx.draw_networkx_edges(graph, pos, ax=ax)
+    nx.draw_networkx_nodes(graph, pos, ax=ax, **nodes_kws)
+    nx.draw_networkx_labels(graph, pos, labels=node_labels, ax=ax, **labels_kws)
+    nx.draw_networkx_edges(graph, pos, ax=ax, **edges_kws)
 
     ax.axis('off')
 
