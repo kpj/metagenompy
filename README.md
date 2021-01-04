@@ -37,7 +37,7 @@ for node in nx.shortest_path(graph.to_undirected(as_view=True), '9606', '4615'):
 
 ### Easy transformation and visualization of taxonomy
 
-`metagenompy`, e.g., allows you to quickly extract taxonomic entities of interest and visualize their relations.
+Extract taxonomic entities of interest and visualize their relations:
 
 ```python
 import metagenompy
@@ -68,3 +68,35 @@ fig.savefig('taxonomy.pdf')
 <p align="center">
     <img src="gallery/taxonomy.png" width="50%">
 </p>
+
+
+Classify taxonomic entities at different ranks:
+
+```python
+import metagenompy
+import pandas as pd
+
+
+# load taxonomy
+graph = metagenompy.generate_taxonomy_network()
+
+# classification
+tmp = []
+for taxid in ['9606', '9685', '3747']:
+    for rank in ['class', 'order']:
+        clf_id = metagenompy.classify_taxid(graph, taxid, rank)
+        tmp.append({
+            'taxid': graph.nodes[taxid]['scientific_name'],
+            'rank': rank,
+            'clf': graph.nodes[clf_id]['scientific_name']
+        })
+
+pd.DataFrame(tmp)
+##                  taxid   rank            clf
+## 0         Homo sapiens  class       Mammalia
+## 1         Homo sapiens  order       Primates
+## 2          Felis catus  class       Mammalia
+## 3          Felis catus  order      Carnivora
+## 4  Fragaria x ananassa  class  Magnoliopsida
+## 5  Fragaria x ananassa  order        Rosales
+```
