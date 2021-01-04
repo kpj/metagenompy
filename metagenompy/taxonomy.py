@@ -93,12 +93,3 @@ def plot_taxonomy(
     nx.draw_networkx_edges(graph, pos, ax=ax, **edges_kws)
 
     ax.axis('off')
-
-
-if __name__ == '__main__':
-    graph = generate_taxonomy_network()
-
-    for node in nx.shortest_path(graph.to_undirected(as_view=True), '9606', '4615'):
-        print(node, graph.nodes[node])
-
-    import IPython; IPython.embed()
