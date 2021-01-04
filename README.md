@@ -65,4 +65,6 @@ fig.tight_layout()
 fig.savefig('taxonomy.pdf')
 ```
 
-![Exemplary taxonomy](gallery/taxonomy.png)
+<p align="center">
+    <img src="gallery/taxonomy.png" width="50%">
+</p>
