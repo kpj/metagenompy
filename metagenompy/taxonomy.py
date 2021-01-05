@@ -50,12 +50,12 @@ def generate_taxonomy_network(
 
 def condense_taxonomy(
     graph,
-    relevant_ranks=['no rank', 'kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'subspecies']
+    abbreviated_lineage=['no rank', 'superkingdom', 'kingdom', 'phylum', 'class', 'order', 'suborder', 'family', 'genus', 'species', 'subspecies']
 ):
     """Contract certain edges in-place."""
     node_data = list(graph.nodes(data=True))
     for node, data in tqdm(node_data):
-        if data['rank'] not in relevant_ranks:
+        if data['rank'] not in abbreviated_lineage:
             sources = graph.predecessors(node)
             targets = graph.successors(node)
 
