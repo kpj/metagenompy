@@ -79,7 +79,7 @@ def classify_taxid(graph, taxid, rank):
         assert len(parents) == 1
 
         if node == parents[0]:
-            raise RuntimeError(f'Cannot classify {taxid} at rank {rank}')
+            return pd.NA
 
         node = parents[0]
 

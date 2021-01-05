@@ -1,3 +1,5 @@
+import pandas as pd
+
 import pytest
 
 import metagenompy
@@ -120,5 +122,4 @@ def test_classification(taxdump):
     assert metagenompy.classify_taxid(graph, '20', 'kingdom') == '2'
     assert metagenompy.classify_taxid(graph, '30', 'kingdom') == '3'
 
-    with pytest.raises(RuntimeError, match=r'.* 30 .* phylum'):
-        metagenompy.classify_taxid(graph, '30', 'phylum')
+    assert pd.isna(metagenompy.classify_taxid(graph, '30', 'phylum'))
