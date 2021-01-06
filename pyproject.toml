@@ -16,3 +16,8 @@ matplotlib = "^3.3.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.1"
+black = "^20.8b1"
+
+[tool.black]
+line_length = 79
+skip_string_normalization = true

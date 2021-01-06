@@ -42,7 +42,9 @@ def generate_taxonomy_network(
         for line in tqdm(fd.readlines(), desc='Parsing nodes'):
             tax_id, parent_tax_id, rank, *_ = line.split('\t|\t')
 
-            graph.add_node(tax_id, rank=rank, **taxid2data[tax_id])  # also updates if node exists
+            graph.add_node(
+                tax_id, rank=rank, **taxid2data[tax_id]
+            )  # also updates if node exists
             graph.add_edge(parent_tax_id, tax_id)
 
     return graph
@@ -50,7 +52,19 @@ def generate_taxonomy_network(
 
 def condense_taxonomy(
     graph,
-    abbreviated_lineage=['no rank', 'superkingdom', 'kingdom', 'phylum', 'class', 'order', 'suborder', 'family', 'genus', 'species', 'subspecies']
+    abbreviated_lineage=[
+        'no rank',
+        'superkingdom',
+        'kingdom',
+        'phylum',
+        'class',
+        'order',
+        'suborder',
+        'family',
+        'genus',
+        'species',
+        'subspecies',
+    ],
 ):
     """Contract certain edges in-place."""
     node_data = list(graph.nodes(data=True))
@@ -59,9 +73,11 @@ def condense_taxonomy(
             sources = graph.predecessors(node)
             targets = graph.successors(node)
 
-            new_edges = [(source, target)
-                         for source, target in itertools.product(sources, targets)
-                         if source != target]
+            new_edges = [
+                (source, target)
+                for source, target in itertools.product(sources, targets)
+                if source != target
+            ]
 
             graph.add_edges_from(new_edges)
             graph.remove_node(node)
@@ -96,13 +112,17 @@ def highlight_nodes(graph, node_list, root_node='1'):
 
 def plot_taxonomy(
     graph,
-    ax=None, label_key='scientific_name',
-    nodes_kws=dict(), labels_kws=dict(), edges_kws=dict()
+    ax=None,
+    label_key='scientific_name',
+    nodes_kws=dict(),
+    labels_kws=dict(),
+    edges_kws=dict(),
 ):
     """Visualize given taxonomy."""
     # compute additional properties
-    node_labels = {n: data.get(label_key, '')
-                   for n, data in graph.nodes(data=True)}
+    node_labels = {
+        n: data.get(label_key, '') for n, data in graph.nodes(data=True)
+    }
 
     # create layout
     pos = nx.nx_agraph.pygraphviz_layout(graph, prog='dot')
@@ -112,7 +132,9 @@ def plot_taxonomy(
         ax = plt.gca()
 
     nx.draw_networkx_nodes(graph, pos, ax=ax, **nodes_kws)
-    nx.draw_networkx_labels(graph, pos, labels=node_labels, ax=ax, **labels_kws)
+    nx.draw_networkx_labels(
+        graph, pos, labels=node_labels, ax=ax, **labels_kws
+    )
     nx.draw_networkx_edges(graph, pos, ax=ax, **edges_kws)
 
     ax.axis('off')

@@ -44,7 +44,11 @@ def test_taxonomy_creation(taxdump):
         '3': {'rank': 'kingdom', 'common_name': 'foo3'},
         '20': {'rank': 'phylum', 'common_name': 'bar20'},
         '30': {'rank': 'clade', 'common_name': 'bar30'},
-        '300': {'rank': 'phylum', 'common_name': 'baz300', 'special': ['hui', 'buh']},
+        '300': {
+            'rank': 'phylum',
+            'common_name': 'baz300',
+            'special': ['hui', 'buh'],
+        },
     }
     expected_edges = [
         ('1', '1', {}),
@@ -72,7 +76,11 @@ def test_taxonomy_condensation(taxdump):
         '2': {'rank': 'kingdom', 'common_name': 'foo2'},
         '3': {'rank': 'kingdom', 'common_name': 'foo3'},
         '20': {'rank': 'phylum', 'common_name': 'bar20'},
-        '300': {'rank': 'phylum', 'common_name': 'baz300', 'special': ['hui', 'buh']},
+        '300': {
+            'rank': 'phylum',
+            'common_name': 'baz300',
+            'special': ['hui', 'buh'],
+        },
     }
     expected_edges = [
         ('1', '1', {}),
