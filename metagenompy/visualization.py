@@ -1,6 +1,9 @@
+import numpy as np
+import pandas as pd
 import networkx as nx
 
 import matplotlib.pyplot as plt
+from matplotlib.patches import Patch
 
 
 def plot_network(
@@ -31,3 +34,96 @@ def plot_network(
     nx.draw_networkx_edges(graph, pos, ax=ax, **edges_kws)
 
     ax.axis('off')
+
+
+def plot_piechart(
+    df_inp,
+    rank_list=['species', 'genus', 'class', 'superkingdom'],
+    minimum_taxon_fraction=0.1,
+    ax=None,
+    colormap='tab10',
+    plot_legend=False,
+):
+    """Plot nested taxon piechart."""
+    df = df_inp.copy()
+
+    # only consider taxons of some minimal frequency
+    total_freqs = df['taxid'].value_counts(normalize=True)
+    top_taxons = total_freqs[total_freqs >= minimum_taxon_fraction].index
+    df = df[df['taxid'].isin(top_taxons)]
+
+    # some taxons don't have certain ranks, let's fill them up with lower rank values
+    for i in range(len(rank_list) - 1):
+        df[rank_list[i + 1]] = df[rank_list[i + 1]].combine_first(
+            df[rank_list[i]]
+        )
+
+    # create plot
+    if ax is not None:
+        # TODO: handle this in a better way
+        ax.set_axis_off()
+        plt.sca(ax)
+    ax = plt.gca(projection='polar')
+
+    # preliminary setup
+    colormap = plt.get_cmap(colormap)
+    pos_y_list, height = np.linspace(0, 1, len(rank_list), retstep=True)
+
+    previous_rank = None
+    previous_order = None
+    for i, (rank, pos_y) in enumerate(zip(rank_list[::-1], pos_y_list)):
+        # to align subranks with superranks, we need to remember their order and count respectively
+        if previous_order is None:
+            freqs = df[rank].value_counts(dropna=True)
+        else:
+            freq_list = []
+            for taxon in previous_order:
+                tmp = df.loc[df[previous_rank] == taxon, rank]
+                freq_list.append(tmp.value_counts())
+            freqs = pd.concat(freq_list)
+
+        previous_rank = rank
+        previous_order = freqs.index
+
+        # compute position and width of each bar
+        width_list = freqs / np.sum(freqs) * 2 * np.pi
+        pos_x_list = np.cumsum(np.append(0, width_list[:-1]))
+
+        # plot actual bars
+        ax.bar(
+            x=pos_x_list,
+            width=width_list,
+            bottom=pos_y,
+            height=height,
+            color=colormap(i),
+            edgecolor='w',
+            linewidth=1,
+            align='edge',
+        )
+
+        # add labels to each bar
+        for pos_x, width, label in zip(pos_x_list, width_list, freqs.index):
+            label_pos_x = pos_x + width / 2
+            label_pos_y = pos_y + height / 2
+            ax.text(
+                label_pos_x,
+                label_pos_y,
+                label,
+                ha='center',
+                va='center',
+                clip_on=False,
+            )
+
+    # add rank legend
+    if plot_legend:
+        ax.legend(
+            handles=[
+                Patch(facecolor=colormap(i), label=rank)
+                for i, rank in enumerate(rank_list[::-1])
+            ],
+            loc='best',
+        )
+
+    # finalize plot
+    ax.set_axis_off()
+    ax.set_aspect('equal')
