@@ -100,6 +100,28 @@ def classify_taxid(graph, taxid, rank):
         node = parents[0]
 
 
+def classify_dataframe(
+    graph,
+    df,
+    rank_list=['species', 'genus', 'class', 'superkingdom'],
+    name_key='scientific_name',
+):
+    """Create dataframe with various rank classifications."""
+
+    def classify(taxid, rank):
+        clf_id = classify_taxid(graph, taxid, rank)
+
+        if pd.isna(clf_id) or name_key is None:
+            return clf_id
+
+        return graph.nodes[clf_id][name_key]
+
+    for rank in tqdm(rank_list, desc='Classifying'):
+        df[rank] = df['taxid'].apply(classify, rank=rank)
+
+    return df
+
+
 def highlight_nodes(graph, node_list, root_node='1'):
     """Retain only specified nodes and their paths to root."""
     node_subset = set()

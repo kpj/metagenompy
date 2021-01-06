@@ -1,6 +1,7 @@
 import pandas as pd
 
 import pytest
+import pandas.testing as pdt
 
 import metagenompy
 
@@ -131,3 +132,26 @@ def test_classification(taxdump):
     assert metagenompy.classify_taxid(graph, '30', 'kingdom') == '3'
 
     assert pd.isna(metagenompy.classify_taxid(graph, '30', 'phylum'))
+
+
+def test_dataframe_classification(taxdump):
+    fname_nodes, fname_names = taxdump
+    graph = metagenompy.generate_taxonomy_network(
+        fname_nodes=fname_nodes, fname_names=fname_names
+    )
+
+    df = pd.DataFrame({'taxid': ['20', '300']})
+    df = metagenompy.classify_dataframe(
+        graph, df, rank_list=['clade', 'kingdom'], name_key=None
+    )
+
+    pdt.assert_frame_equal(
+        df,
+        pd.DataFrame(
+            {
+                'taxid': ['20', '300'],
+                'clade': [pd.NA, '30'],
+                'kingdom': ['2', '3'],
+            }
+        ),
+    )
