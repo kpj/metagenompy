@@ -155,3 +155,27 @@ def test_dataframe_classification(taxdump):
             }
         ),
     )
+
+
+def test_classification_aggregation():
+    df = pd.DataFrame(
+        {
+            'qseqid': ['read1', 'read1', 'read1', 'read2', 'read2'],
+            'taxid': ['43', '42', '42', '123', '456'],
+            'other_rank': ['a', 'a', 'a', 'b', 'b'],
+            'neat_rank': ['A', 'A', 'A', 'B', 'BB'],
+        }
+    )
+    df_agg = metagenompy.aggregate_classifications(df, 'neat_rank')
+
+    pdt.assert_frame_equal(
+        df_agg,
+        pd.DataFrame(
+            {
+                'taxid': ['42', pd.NA],
+                'other_rank': ['a', pd.NA],
+                'neat_rank': ['A', pd.NA],
+            },
+            index=pd.Index(['read1', 'read2'], name='qseqid'),
+        ),
+    )

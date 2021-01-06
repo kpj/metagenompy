@@ -6,6 +6,9 @@ import networkx as nx
 from tqdm import tqdm
 
 
+tqdm.pandas()
+
+
 def generate_taxonomy_network(
     fname_nodes='nodes.dmp', fname_names='names.dmp'
 ):
@@ -105,7 +108,7 @@ def classify_dataframe(
 ):
     """Create dataframe with various rank classifications."""
 
-    def classify(taxid, rank):
+    def func(taxid, rank):
         clf_id = classify_taxid(graph, taxid, rank)
 
         if pd.isna(clf_id) or name_key is None:
@@ -114,9 +117,34 @@ def classify_dataframe(
         return graph.nodes[clf_id][name_key]
 
     for rank in tqdm(rank_list, desc='Classifying'):
-        df[rank] = df['taxid'].apply(classify, rank=rank)
+        df[rank] = df['taxid'].apply(func, rank=rank)
 
     return df
+
+
+def aggregate_classifications(
+    df, rank, min_fraction=1, group_column='qseqid', taxon_column='taxid'
+):
+    """Aggregate dataframe at given rank."""
+    assert min_fraction > 0.5, 'min_fraction must be greater than 0.5'
+
+    def func(x):
+        # discard entry if there is no majority
+        freqs = x[rank].value_counts(normalize=True)
+        if freqs.max() < min_fraction:
+            # returning pd.NA leads to "AttributeError: 'NAType' object has no attribute 'index'"
+            return None
+
+        # retain only most common taxon
+        top_taxon = x[taxon_column].value_counts().index[0]
+        return x[x[taxon_column] == top_taxon].iloc[0]
+
+    return (
+        df.groupby(group_column)
+        .progress_apply(func)
+        .fillna(pd.NA)
+        .drop(group_column, axis=1)
+    )
 
 
 def highlight_nodes(graph, node_list, root_node='1'):
