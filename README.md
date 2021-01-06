@@ -1,6 +1,7 @@
 # metagenompy
 
 [![PyPI](https://img.shields.io/pypi/v/metagenompy.svg?style=flat)](https://pypi.python.org/pypi/metagenompy)
+[![Tests](https://github.com/kpj/metagenompy/workflows/Tests/badge.svg)](https://github.com/kpj/metagenompy/actions)
 
 Your all-inclusive package for aggregating and visualizing metagenomic BLAST results.
 
