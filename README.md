@@ -63,14 +63,12 @@ graph_zoom = metagenompy.highlight_nodes(graph, [
 
 # visualize result
 fig, ax = plt.subplots(figsize=(10, 10))
-metagenompy.plot_taxonomy(graph_zoom, ax=ax, labels_kws=dict(font_size=10))
+metagenompy.plot_network(graph_zoom, ax=ax, labels_kws=dict(font_size=10))
 fig.tight_layout()
 fig.savefig('taxonomy.pdf')
 ```
 
-<p align="center">
-    <img src="gallery/taxonomy.png" width="50%">
-</p>
+<img src="gallery/taxonomy.png" width="50%">
 
 
 Classify taxonomic entities at different ranks:

@@ -3,7 +3,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 
-def plot_taxonomy(
+def plot_network(
     graph,
     ax=None,
     label_key='scientific_name',
