@@ -15,6 +15,55 @@ $ pip install metagenompy
 
 ## Usage
 
+### Summary statistics for BLAST results
+
+After blasting your reads against a [sequence database](ftp://ftp.ncbi.nlm.nih.gov/blast/db/FASTA/), generating summary reports using `metagenompy` is a blast.
+
+```python
+# read BLAST results file with columns 'qseqid' and 'staxids'
+df = (pd.read_csv('blast_result.csv')
+        .set_index('qseqid')['staxids']
+        .str.split(';')
+        .explode()
+        .dropna()
+        .reset_index()
+        .rename(columns={'staxids': 'taxid'})
+)
+
+df.head()
+##    qseqid    taxid
+## 0   read1   648716
+## 1   read1  1797690
+## 2   read1  1817827
+## 3   read1  2580422
+## 4   read1     1451
+
+# classify taxons at multiple ranks
+rank_list = ['species', 'genus', 'class', 'superkingdom']
+df = classify_dataframe(
+    graph, df,
+    rank_list=rank_list
+)
+
+# aggregate read matches
+agg_rank = 'genus'
+df_agg = aggregate_classifications(df, agg_rank)
+
+df_agg.head()
+##         taxid                   species            genus            class superkingdom
+## qseqid
+## read1    <NA>                      <NA>             <NA>             <NA>         <NA>
+## read2   36035  Saccharomycodes ludwigii  Saccharomycodes  Saccharomycetes    Eukaryota
+## read3    1352      Enterococcus faecium     Enterococcus          Bacilli     Bacteria
+## read4    1352      Enterococcus faecium     Enterococcus          Bacilli     Bacteria
+## read5    1352      Enterococcus faecium     Enterococcus          Bacilli     Bacteria
+
+# visualize outcome
+plot_piechart(df_agg)
+```
+
+<img src="gallery/piechart.png" width="50%">
+
 ### NCBI taxonomy as NetworkX object
 
 The core of `metagenompy` is a taxonomy as a networkX object.
@@ -38,7 +87,7 @@ for node in nx.shortest_path(graph.to_undirected(as_view=True), '9606', '4615'):
 ## 4615 {'rank': 'species', 'authority': ['Ananas comosus (L.) Merr., 1917', 'Ananas lucidus Mill., 1754'], 'scientific_name': 'Ananas comosus', 'synonym': ['Ananas comosus var. comosus', 'Ananas lucidus'], 'genbank_common_name': 'pineapple'}
 ```
 
-### Easy transformation and visualization of taxonomy
+### Easy transformation and visualization of taxonomic tree
 
 Extract taxonomic entities of interest and visualize their relations:
 
@@ -68,36 +117,4 @@ fig.tight_layout()
 fig.savefig('taxonomy.pdf')
 ```
 
-<img src="gallery/taxonomy.png" width="50%">
-
-
-Classify taxonomic entities at different ranks:
-
-```python
-import metagenompy
-import pandas as pd
-
-
-# load taxonomy
-graph = metagenompy.generate_taxonomy_network()
-
-# classification
-tmp = []
-for taxid in ['9606', '9685', '3747']:
-    for rank in ['class', 'order']:
-        clf_id = metagenompy.classify_taxid(graph, taxid, rank)
-        tmp.append({
-            'taxid': graph.nodes[taxid]['scientific_name'],
-            'rank': rank,
-            'clf': graph.nodes[clf_id]['scientific_name']
-        })
-
-pd.DataFrame(tmp)
-##                  taxid   rank            clf
-## 0         Homo sapiens  class       Mammalia
-## 1         Homo sapiens  order       Primates
-## 2          Felis catus  class       Mammalia
-## 3          Felis catus  order      Carnivora
-## 4  Fragaria x ananassa  class  Magnoliopsida
-## 5  Fragaria x ananassa  order        Rosales
-```
+<img src="gallery/network.png" width="50%">
