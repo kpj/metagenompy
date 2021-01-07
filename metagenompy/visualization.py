@@ -41,7 +41,7 @@ def plot_network(
 def plot_piechart(
     df_inp,
     rank_list=['species', 'genus', 'class', 'superkingdom'],
-    minimum_taxon_fraction=0.1,
+    max_taxon_count=5,
     ax=None,
     colormap='tab10',
     plot_legend=False,
@@ -58,7 +58,9 @@ def plot_piechart(
 
     # only consider taxons of some minimal frequency
     total_freqs = df['taxid'].value_counts(normalize=True)
-    top_taxons = total_freqs[total_freqs >= minimum_taxon_fraction].index
+    if max_taxon_count is not None:
+        total_freqs = total_freqs.head(max_taxon_count)
+    top_taxons = total_freqs.index
 
     if show_hidden_ranks:
         df.loc[~df['taxid'].isin(top_taxons), rank_list] = 'other'
