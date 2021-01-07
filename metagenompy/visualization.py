@@ -46,6 +46,7 @@ def plot_piechart(
     colormap='tab10',
     plot_legend=False,
     label_template='{taxon}',  # can use {taxon}, {count}
+    show_hidden_ranks=False,
 ):
     """Plot nested taxon piechart."""
     df = df_inp.copy()
@@ -53,7 +54,11 @@ def plot_piechart(
     # only consider taxons of some minimal frequency
     total_freqs = df['taxid'].value_counts(normalize=True)
     top_taxons = total_freqs[total_freqs >= minimum_taxon_fraction].index
-    df = df[df['taxid'].isin(top_taxons)]
+
+    if show_hidden_ranks:
+        df.loc[~df['taxid'].isin(top_taxons), rank_list] = 'other'
+    else:
+        df = df[df['taxid'].isin(top_taxons)]
 
     # some taxons don't have certain ranks, let's fill them up with lower rank values
     for i in range(len(rank_list) - 1):
@@ -82,7 +87,7 @@ def plot_piechart(
             freq_list = []
             for taxon in previous_order:
                 tmp = df.loc[df[previous_rank] == taxon, rank]
-                freq_list.append(tmp.value_counts())
+                freq_list.append(tmp.value_counts(dropna=True))
             freqs = pd.concat(freq_list)
 
         previous_rank = rank
