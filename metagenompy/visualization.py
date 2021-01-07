@@ -115,7 +115,9 @@ def plot_piechart(
         )
 
         # add labels to each bar
-        for pos_x, width, taxon, freq in zip(pos_x_list, width_list, freqs.index, freqs):
+        for pos_x, width, taxon, freq in zip(
+            pos_x_list, width_list, freqs.index, freqs
+        ):
             label_pos_x = pos_x + width / 2
             label_pos_y = pos_y + height / 2
 
