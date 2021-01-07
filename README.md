@@ -20,6 +20,9 @@ $ pip install metagenompy
 After blasting your reads against a [sequence database](ftp://ftp.ncbi.nlm.nih.gov/blast/db/FASTA/), generating summary reports using `metagenompy` is a blast.
 
 ```python
+import metagenompy
+
+
 # read BLAST results file with columns 'qseqid' and 'staxids'
 df = (pd.read_csv('blast_result.csv')
         .set_index('qseqid')['staxids']
@@ -40,14 +43,14 @@ df.head()
 
 # classify taxons at multiple ranks
 rank_list = ['species', 'genus', 'class', 'superkingdom']
-df = classify_dataframe(
+df = metagenompy.classify_dataframe(
     graph, df,
     rank_list=rank_list
 )
 
 # aggregate read matches
 agg_rank = 'genus'
-df_agg = aggregate_classifications(df, agg_rank)
+df_agg = metagenompy.aggregate_classifications(df, agg_rank)
 
 df_agg.head()
 ##         taxid                   species            genus            class superkingdom
@@ -59,7 +62,7 @@ df_agg.head()
 ## read5    1352      Enterococcus faecium     Enterococcus          Bacilli     Bacteria
 
 # visualize outcome
-plot_piechart(df_agg)
+metagenompy.plot_piechart(df_agg)
 ```
 
 <img src="gallery/piechart.png" width="50%">
