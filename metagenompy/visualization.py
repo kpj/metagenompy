@@ -45,7 +45,7 @@ def plot_piechart(
     ax=None,
     colormap='tab10',
     plot_legend=False,
-    count_labels=False,
+    label_template='{taxon}',  # can use {taxon}, {count}
 ):
     """Plot nested taxon piechart."""
     df = df_inp.copy()
@@ -105,12 +105,11 @@ def plot_piechart(
         )
 
         # add labels to each bar
-        for pos_x, width, label, freq in zip(pos_x_list, width_list, freqs.index, freqs):
+        for pos_x, width, taxon, freq in zip(pos_x_list, width_list, freqs.index, freqs):
             label_pos_x = pos_x + width / 2
             label_pos_y = pos_y + height / 2
 
-            if count_labels:
-                label = f'{label} ({freq})'
+            label = label_template.format(taxon=taxon, count=freq)
 
             ax.text(
                 label_pos_x,
