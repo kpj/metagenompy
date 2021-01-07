@@ -35,6 +35,8 @@ def plot_network(
 
     ax.axis('off')
 
+    return ax
+
 
 def plot_piechart(
     df_inp,
@@ -127,3 +129,5 @@ def plot_piechart(
     # finalize plot
     ax.set_axis_off()
     ax.set_aspect('equal')
+
+    return ax
