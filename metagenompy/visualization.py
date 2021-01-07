@@ -47,9 +47,14 @@ def plot_piechart(
     plot_legend=False,
     label_template='{taxon}',  # can use {taxon}, {count}
     show_hidden_ranks=False,
+    show_unmatched_reads=False,
 ):
     """Plot nested taxon piechart."""
     df = df_inp.copy()
+
+    # consider reads which were not matched
+    if show_unmatched_reads:
+        df[df['taxid'].isna()] = 'no_taxon'
 
     # only consider taxons of some minimal frequency
     total_freqs = df['taxid'].value_counts(normalize=True)
