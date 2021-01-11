@@ -23,6 +23,23 @@ import metagenompy
                 name='rank01'
             ),
         ]
+    ),
+    (
+        pd.DataFrame(
+            {
+                'taxid': ['1', '1', '2'],
+                'rank01': ['AA', 'AA', pd.NA],
+                'rank02': ['A', 'A', 'B'],
+            }
+        ),
+        [
+            pd.Series([2, 1], index=['A', 'B'], name='rank02'),
+            pd.Series(
+                [2, 1],
+                index=['AA', pd.NA],
+                name='rank01'
+            ),
+        ]
     )
 ])
 def test_rank_frequency_computation(df_input, expected_output):
