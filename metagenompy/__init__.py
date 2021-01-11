@@ -8,5 +8,6 @@ except ImportError:
 __version__ = metadata.version('metagenompy')
 
 # package imports
+from .data import *
 from .taxonomy import *
 from .visualization import *

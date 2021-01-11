@@ -25,24 +25,26 @@ import pandas as pd
 
 
 # read BLAST results file with columns 'qseqid' and 'staxids'
-df = (pd.read_csv('blast_result.csv')
-        .set_index('qseqid')['staxids']
-        .str.split(';')
-        .explode()
-        .dropna()
-        .reset_index()
-        .rename(columns={'staxids': 'taxid'})
+df_blast = metagenompy.load_example_dataset()
+df = (df_blast.set_index('qseqid')['staxids']
+              .str.split(';')
+              .explode()
+              .dropna()
+              .reset_index()
+              .rename(columns={'staxids': 'taxid'})
 )
 
 df.head()
-##    qseqid    taxid
-## 0   read1   648716
-## 1   read1  1797690
-## 2   read1  1817827
-## 3   read1  2580422
-## 4   read1     1451
+##   qseqid    taxid
+## 0  read1  1811693
+## 1  read2   327160
+## 2  read3      821
+## 3  read4  1871047
+## 4  read5    69360
 
 # classify taxons at multiple ranks
+graph = metagenompy.generate_taxonomy_network()
+
 rank_list = ['species', 'genus', 'class', 'superkingdom']
 df = metagenompy.classify_dataframe(
     graph, df,
@@ -54,13 +56,13 @@ agg_rank = 'genus'
 df_agg = metagenompy.aggregate_classifications(df, agg_rank)
 
 df_agg.head()
-##         taxid                   species            genus            class superkingdom
+##            taxid                        species           genus                class superkingdom
 ## qseqid
-## read1    <NA>                      <NA>             <NA>             <NA>         <NA>
-## read2   36035  Saccharomycodes ludwigii  Saccharomycodes  Saccharomycetes    Eukaryota
-## read3    1352      Enterococcus faecium     Enterococcus          Bacilli     Bacteria
-## read4    1352      Enterococcus faecium     Enterococcus          Bacilli     Bacteria
-## read5    1352      Enterococcus faecium     Enterococcus          Bacilli     Bacteria
+## read1    1811693  Pelotomaculum sp. PtaB.Bin104   Pelotomaculum           Clostridia     Bacteria
+## read10   2488860         Erythrobacter spongiae   Erythrobacter  Alphaproteobacteria     Bacteria
+## read100    78398      Pectobacterium odoriferum  Pectobacterium  Gammaproteobacteria     Bacteria
+## read101  1843082           Macromonas sp. BK-30      Macromonas   Betaproteobacteria     Bacteria
+## read102  2665644      Paracoccus sp. YIM 132242      Paracoccus  Alphaproteobacteria     Bacteria
 
 # visualize outcome
 metagenompy.plot_piechart(df_agg)
