@@ -51,6 +51,10 @@ def compute_rank_frequencies(
     # consider reads which were not matched
     if include_unmatched_reads:
         df[df['taxid'].isna()] = 'no_taxon'
+    else:
+        # this will drop unidentified reads, but keep those
+        # which have no value at certain ranks
+        df = df.dropna(subset=['taxid'])
 
     # only consider taxons of some minimal frequency
     total_freqs = df['taxid'].value_counts(normalize=True)
@@ -77,12 +81,12 @@ def compute_rank_frequencies(
     for i, rank in enumerate(rank_list[::-1]):
         # to align subranks with superranks, we need to remember their order and count respectively
         if previous_order is None:
-            freqs = df[rank].value_counts(dropna=True)
+            freqs = df[rank].value_counts(dropna=False)
         else:
             freq_list = []
             for taxon in previous_order:
                 tmp = df.loc[df[previous_rank] == taxon, rank]
-                freq_list.append(tmp.value_counts(dropna=True))
+                freq_list.append(tmp.value_counts(dropna=False))
             freqs = pd.concat(freq_list)
 
         previous_rank = rank
