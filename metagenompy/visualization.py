@@ -130,9 +130,7 @@ def plot_piechart(
     colormap = plt.get_cmap(colormap)
     pos_y_list, height = np.linspace(0, 1, len(rank_list), retstep=True)
 
-    for i, (freqs, pos_y) in enumerate(
-        zip(freq_list, pos_y_list)
-    ):
+    for i, (freqs, pos_y) in enumerate(zip(freq_list, pos_y_list)):
         # compute position and width of each bar
         width_list = freqs / np.sum(freqs) * 2 * np.pi
         pos_x_list = np.cumsum(np.append(0, width_list[:-1]))
