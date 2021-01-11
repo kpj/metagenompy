@@ -38,22 +38,18 @@ def plot_network(
     return ax
 
 
-def plot_piechart(
+def compute_rank_frequencies(
     df_inp,
     rank_list=['species', 'genus', 'class', 'superkingdom'],
     max_taxon_count=5,
-    ax=None,
-    colormap='tab10',
-    plot_legend=False,
-    label_template='{taxon}',  # can use {taxon}, {count}
-    show_hidden_ranks=False,
-    show_unmatched_reads=False,
+    include_hidden_ranks=False,
+    include_unmatched_reads=False,
 ):
-    """Plot nested taxon piechart."""
+    """Compute nested rank frequencies."""
     df = df_inp.copy()
 
     # consider reads which were not matched
-    if show_unmatched_reads:
+    if include_unmatched_reads:
         df[df['taxid'].isna()] = 'no_taxon'
 
     # only consider taxons of some minimal frequency
@@ -62,7 +58,7 @@ def plot_piechart(
         total_freqs = total_freqs.head(max_taxon_count)
     top_taxons = total_freqs.index
 
-    if show_hidden_ranks:
+    if include_hidden_ranks:
         df.loc[~df['taxid'].isin(top_taxons), rank_list] = 'other'
     else:
         df = df[df['taxid'].isin(top_taxons)]
@@ -73,20 +69,12 @@ def plot_piechart(
             df[rank_list[i]]
         )
 
-    # create plot
-    if ax is not None:
-        # TODO: handle this in a better way
-        ax.set_axis_off()
-        plt.sca(ax)
-    ax = plt.gca(projection='polar')
-
-    # preliminary setup
-    colormap = plt.get_cmap(colormap)
-    pos_y_list, height = np.linspace(0, 1, len(rank_list), retstep=True)
+    # compute frequencies
+    result = {}
 
     previous_rank = None
     previous_order = None
-    for i, (rank, pos_y) in enumerate(zip(rank_list[::-1], pos_y_list)):
+    for i, rank in enumerate(rank_list[::-1]):
         # to align subranks with superranks, we need to remember their order and count respectively
         if previous_order is None:
             freqs = df[rank].value_counts(dropna=True)
@@ -100,6 +88,47 @@ def plot_piechart(
         previous_rank = rank
         previous_order = freqs.index
 
+        # store result
+        result[rank] = freqs
+
+    return result
+
+
+def plot_piechart(
+    df_inp,
+    ax=None,
+    colormap='tab10',
+    plot_legend=False,
+    label_template='{taxon}',  # can use {taxon}, {count}
+    rank_list=['species', 'genus', 'class', 'superkingdom'],
+    max_taxon_count=5,
+    include_hidden_ranks=False,
+    include_unmatched_reads=False,
+):
+    """Plot nested taxon piechart."""
+    # compute frequencies
+    freq_dict = compute_rank_frequencies(
+        df_inp,
+        rank_list=rank_list,
+        max_taxon_count=max_taxon_count,
+        include_hidden_ranks=include_hidden_ranks,
+        include_unmatched_reads=include_unmatched_reads,
+    )
+
+    # setup plot
+    if ax is not None:
+        # TODO: handle this in a better way
+        ax.set_axis_off()
+        plt.sca(ax)
+    ax = plt.gca(projection='polar')
+
+    # preliminary setup
+    colormap = plt.get_cmap(colormap)
+    pos_y_list, height = np.linspace(0, 1, len(rank_list), retstep=True)
+
+    for i, ((rank, freqs), pos_y) in enumerate(
+        zip(freq_dict.items(), pos_y_list)
+    ):
         # compute position and width of each bar
         width_list = freqs / np.sum(freqs) * 2 * np.pi
         pos_x_list = np.cumsum(np.append(0, width_list[:-1]))
@@ -139,7 +168,7 @@ def plot_piechart(
         ax.legend(
             handles=[
                 Patch(facecolor=colormap(i), label=rank)
-                for i, rank in enumerate(rank_list[::-1])
+                for i, rank in enumerate(freq_dict.keys())
             ],
             loc='best',
         )
