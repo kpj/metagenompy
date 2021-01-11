@@ -74,7 +74,7 @@ def compute_rank_frequencies(
         )
 
     # compute frequencies
-    result = {}
+    result = []
 
     previous_rank = None
     previous_order = None
@@ -93,7 +93,7 @@ def compute_rank_frequencies(
         previous_order = freqs.index
 
         # store result
-        result[rank] = freqs
+        result.append(freqs)
 
     return result
 
@@ -111,7 +111,7 @@ def plot_piechart(
 ):
     """Plot nested taxon piechart."""
     # compute frequencies
-    freq_dict = compute_rank_frequencies(
+    freq_list = compute_rank_frequencies(
         df_inp,
         rank_list=rank_list,
         max_taxon_count=max_taxon_count,
@@ -130,8 +130,8 @@ def plot_piechart(
     colormap = plt.get_cmap(colormap)
     pos_y_list, height = np.linspace(0, 1, len(rank_list), retstep=True)
 
-    for i, ((rank, freqs), pos_y) in enumerate(
-        zip(freq_dict.items(), pos_y_list)
+    for i, (freqs, pos_y) in enumerate(
+        zip(freq_list, pos_y_list)
     ):
         # compute position and width of each bar
         width_list = freqs / np.sum(freqs) * 2 * np.pi
@@ -172,7 +172,7 @@ def plot_piechart(
         ax.legend(
             handles=[
                 Patch(facecolor=colormap(i), label=rank)
-                for i, rank in enumerate(freq_dict.keys())
+                for i, rank in enumerate([freq.name for freq in freq_list])
             ],
             loc='best',
         )
