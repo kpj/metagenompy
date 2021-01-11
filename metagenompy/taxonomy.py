@@ -155,3 +155,25 @@ def highlight_nodes(graph, node_list, root_node='1'):
         node_subset.update(path)
 
     return graph.subgraph(node_subset)
+
+
+def rename_merged_nodes(df, fname_merged='merged.dmp'):
+    """Rename taxonomy nodes which have been merged."""
+    # read merged-node data
+    merged_cols = ['old_tax_id', 'new_tax_id', 'dummy']
+    df_merged = pd.read_csv(
+        'merged.dmp',
+        sep='|',
+        header=None,
+        names=merged_cols,
+        dtype={col: 'string' for col in merged_cols},
+    ).drop('dummy', axis=1)
+
+    for col in df_merged.columns:
+        df_merged[col] = df_merged[col].str.strip()
+
+    # rename nodes
+    old2new = df_merged.set_index('old_tax_id').to_dict()['new_tax_id']
+    df['taxid'] = df['taxid'].apply(lambda x: old2new.get(x, x))
+
+    return df
