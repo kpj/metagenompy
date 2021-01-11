@@ -21,6 +21,7 @@ After blasting your reads against a [sequence database](ftp://ftp.ncbi.nlm.nih.g
 
 ```python
 import metagenompy
+import pandas as pd
 
 
 # read BLAST results file with columns 'qseqid' and 'staxids'
