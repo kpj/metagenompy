@@ -12,6 +12,7 @@ include = ["metagenompy/example_data/blast_result.csv.gz"]
 python = "^3.7.1"
 pandas = "^1.2.0"
 networkx = "^2.5"
+pygraphviz = "^1.6"
 tqdm = "^4.55.1"
 matplotlib = "^3.3.3"
 numpy = "^1.19.5"
