@@ -26,7 +26,6 @@ def generate_taxonomy_network(
     fname_nodes='nodes.dmp', fname_names='names.dmp', auto_download=False
 ):
     """Create taxonomic network."""
-
     if auto_download and not (
         Path(fname_nodes).is_file() and Path(fname_names).is_file()
     ):
