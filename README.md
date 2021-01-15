@@ -43,7 +43,7 @@ df.head()
 ## 4  read5    69360
 
 # classify taxons at multiple ranks
-graph = metagenompy.generate_taxonomy_network()
+graph = metagenompy.generate_taxonomy_network(auto_download=True)
 
 rank_list = ['species', 'genus', 'class', 'superkingdom']
 df = metagenompy.classify_dataframe(
@@ -81,7 +81,7 @@ import networkx as nx
 
 
 # load taxonomy
-graph = metagenompy.generate_taxonomy_network()
+graph = metagenompy.generate_taxonomy_network(auto_download=True)
 
 # print path from human to pineapple
 for node in nx.shortest_path(graph.to_undirected(as_view=True), '9606', '4615'):
@@ -103,7 +103,7 @@ import matplotlib.pyplot as plt
 
 
 # load and condense taxonomy to relevant ranks
-graph = metagenompy.generate_taxonomy_network()
+graph = metagenompy.generate_taxonomy_network(auto_download=True)
 metagenompy.condense_taxonomy(graph)
 
 # highlight interesting nodes

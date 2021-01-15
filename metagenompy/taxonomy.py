@@ -1,4 +1,8 @@
+import tarfile
 import itertools
+from pathlib import Path
+from contextlib import closing
+import urllib.request as request
 
 import pandas as pd
 import networkx as nx
@@ -9,10 +13,26 @@ from tqdm import tqdm
 tqdm.pandas()
 
 
+def provide_taxdump(
+    url='ftp://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz',
+):
+    """Download and extract taxonomic data."""
+    with closing(request.urlopen(url)) as req:
+        with tarfile.open(fileobj=req, mode='r|gz') as fd:
+            fd.extractall()
+
+
 def generate_taxonomy_network(
-    fname_nodes='nodes.dmp', fname_names='names.dmp'
+    fname_nodes='nodes.dmp', fname_names='names.dmp', auto_download=False
 ):
     """Create taxonomic network."""
+
+    if auto_download and not (
+        Path(fname_nodes).is_file() and Path(fname_names).is_file()
+    ):
+        print('Unable to find taxonomy dump, downloading now...')
+        provide_taxdump()
+
     # associate tax ids with additional data
     taxid2data = {}
     with open(fname_names) as fd:
