@@ -2,8 +2,11 @@ import numpy as np
 import pandas as pd
 import networkx as nx
 
+import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
+
+from tqdm import tqdm
 
 
 def plot_network(
@@ -178,5 +181,40 @@ def plot_piechart(
     # finalize plot
     ax.set_axis_off()
     ax.set_aspect('equal')
+
+    return ax
+
+
+def plot_rarefaction_curve(
+    df, ax=None, resample_count=3, sample_step_count=30
+):
+    # compute diversity at sampling points
+    steps = np.linspace(1, df.shape[0], num=sample_step_count, dtype=int)
+
+    tmp = []
+    for sample_count in tqdm(steps):
+        for iter_ in range(resample_count):
+            df_sub = df.sample(sample_count)
+            diversity = df_sub['taxid'].nunique()
+
+            tmp.append(
+                {
+                    'subsample_size': sample_count,
+                    'subsample_fraction': sample_count / df.shape[0],
+                    'iteration': iter_,
+                    'unique_taxon_count': diversity,
+                }
+            )
+
+    df_div = pd.DataFrame(tmp)
+
+    # plot result
+    if ax is None:
+        ax = plt.gca()
+
+    sns.lineplot(data=df_div, x='subsample_fraction', y='unique_taxon_count')
+
+    ax.set_xlabel('Subsample fraction')
+    ax.set_ylabel('Unique OTU count')
 
     return ax
