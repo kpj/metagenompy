@@ -27,7 +27,7 @@ jobs:
           poetry build
 
       - name: Test package
-        run: poetry run pytest -v -s
+        run: poetry run pytest -v
 
       - name: Lint package
         run: poetry run black --check --diff .
