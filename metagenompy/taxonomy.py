@@ -178,7 +178,7 @@ def aggregate_classifications(
         df.groupby(group_column)
         .progress_apply(func)
         .fillna(pd.NA)
-        .drop(group_column, axis=1)
+        .drop(group_column, axis=1, errors='ignore')
     )
 
 
