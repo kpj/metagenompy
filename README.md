@@ -15,61 +15,6 @@ $ pip install metagenompy
 
 ## Usage
 
-### Summary statistics for BLAST results
-
-After blasting your reads against a [sequence database](ftp://ftp.ncbi.nlm.nih.gov/blast/db/FASTA/), generating summary reports using `metagenompy` is a blast.
-
-```python
-import metagenompy
-import pandas as pd
-
-
-# read BLAST results file with columns 'qseqid' and 'staxids'
-df_blast = metagenompy.load_example_dataset()
-df = (df_blast.set_index('qseqid')['staxids']
-              .str.split(';')
-              .explode()
-              .dropna()
-              .reset_index()
-              .rename(columns={'staxids': 'taxid'})
-)
-
-df.head()
-##   qseqid    taxid
-## 0  read1  1811693
-## 1  read2   327160
-## 2  read3      821
-## 3  read4  1871047
-## 4  read5    69360
-
-# classify taxons at multiple ranks
-graph = metagenompy.generate_taxonomy_network(auto_download=True)
-
-rank_list = ['species', 'genus', 'class', 'superkingdom']
-df = metagenompy.classify_dataframe(
-    graph, df,
-    rank_list=rank_list
-)
-
-# aggregate read matches
-agg_rank = 'genus'
-df_agg = metagenompy.aggregate_classifications(df, agg_rank)
-
-df_agg.head()
-##            taxid                        species           genus                class superkingdom
-## qseqid
-## read1    1811693  Pelotomaculum sp. PtaB.Bin104   Pelotomaculum           Clostridia     Bacteria
-## read10   2488860         Erythrobacter spongiae   Erythrobacter  Alphaproteobacteria     Bacteria
-## read100    78398      Pectobacterium odoriferum  Pectobacterium  Gammaproteobacteria     Bacteria
-## read101  1843082           Macromonas sp. BK-30      Macromonas   Betaproteobacteria     Bacteria
-## read102  2665644      Paracoccus sp. YIM 132242      Paracoccus  Alphaproteobacteria     Bacteria
-
-# visualize outcome
-metagenompy.plot_piechart(df_agg)
-```
-
-<img src="gallery/piechart.png" width="50%">
-
 ### NCBI taxonomy as NetworkX object
 
 The core of `metagenompy` is a taxonomy as a networkX object.
@@ -124,3 +69,58 @@ fig.savefig('taxonomy.pdf')
 ```
 
 <img src="gallery/network.png" width="50%">
+
+### Summary statistics for BLAST results
+
+After blasting your reads against a [sequence database](ftp://ftp.ncbi.nlm.nih.gov/blast/db/FASTA/), generating summary reports using `metagenompy` is a blast.
+
+```python
+import metagenompy
+import pandas as pd
+
+
+# read BLAST results file with columns 'qseqid' and 'staxids'
+df_blast = metagenompy.load_example_dataset()
+df = (df_blast.set_index('qseqid')['staxids']
+              .str.split(';')
+              .explode()
+              .dropna()
+              .reset_index()
+              .rename(columns={'staxids': 'taxid'})
+)
+
+df.head()
+##   qseqid    taxid
+## 0  read1  1811693
+## 1  read2   327160
+## 2  read3      821
+## 3  read4  1871047
+## 4  read5    69360
+
+# classify taxons at multiple ranks
+graph = metagenompy.generate_taxonomy_network(auto_download=True)
+
+rank_list = ['species', 'genus', 'class', 'superkingdom']
+df = metagenompy.classify_dataframe(
+    graph, df,
+    rank_list=rank_list
+)
+
+# aggregate read matches
+agg_rank = 'genus'
+df_agg = metagenompy.aggregate_classifications(df, agg_rank)
+
+df_agg.head()
+##            taxid                        species           genus                class superkingdom
+## qseqid
+## read1    1811693  Pelotomaculum sp. PtaB.Bin104   Pelotomaculum           Clostridia     Bacteria
+## read10   2488860         Erythrobacter spongiae   Erythrobacter  Alphaproteobacteria     Bacteria
+## read100    78398      Pectobacterium odoriferum  Pectobacterium  Gammaproteobacteria     Bacteria
+## read101  1843082           Macromonas sp. BK-30      Macromonas   Betaproteobacteria     Bacteria
+## read102  2665644      Paracoccus sp. YIM 132242      Paracoccus  Alphaproteobacteria     Bacteria
+
+# visualize outcome
+metagenompy.plot_piechart(df_agg)
+```
+
+<img src="gallery/piechart.png" width="50%">
