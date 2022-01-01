@@ -132,6 +132,7 @@ def test_classification(taxdump):
     assert metagenompy.classify_taxid(graph, '30', 'kingdom') == '3'
 
     assert pd.isna(metagenompy.classify_taxid(graph, '30', 'phylum'))
+    assert pd.isna(metagenompy.classify_taxid(graph, 'unknownid', 'phylum'))
 
 
 def test_dataframe_classification(taxdump):

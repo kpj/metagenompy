@@ -122,7 +122,12 @@ def classify_taxid(graph, taxid, rank):
     """Determine name of given taxid at specified rank."""
     node = taxid
     while True:
-        current_rank = graph.nodes[node]['rank']
+        try:
+            current_rank = graph.nodes[node]['rank']
+        except KeyError:
+            # taxid was not found in graph
+            print(f'Warning: id {node} not in taxonomy')
+            return pd.NA
         if current_rank == rank:
             return node
 
