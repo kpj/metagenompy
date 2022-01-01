@@ -26,3 +26,7 @@ pytest = "^6.2.1"
 [tool.black]
 line_length = 79
 skip_string_normalization = true
+
+[build-system]
+requires = ["poetry"]
+build-backend = "poetry.masonry.api"
