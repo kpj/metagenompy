@@ -9,7 +9,7 @@ repository = "https://github.com/kpj/metagenompy"
 include = ["metagenompy/example_data/blast_result.csv.gz"]
 
 [tool.poetry.dependencies]
-python = "^3.7.1"
+python = "^3.8.0"
 pandas = "^1.3.5"
 networkx = "^2.6.3"
 pygraphviz = "^1.7"
