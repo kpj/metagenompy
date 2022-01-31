@@ -126,7 +126,6 @@ def classify_taxid(graph, taxid, rank):
             current_rank = graph.nodes[node]['rank']
         except KeyError:
             # taxid was not found in graph
-            print(f'Warning: id {node} not in taxonomy')
             return pd.NA
         if current_rank == rank:
             return node
