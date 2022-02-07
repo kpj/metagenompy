@@ -20,7 +20,7 @@ numpy = "^1.21.1"
 
 [tool.poetry.dev-dependencies]
 black = "^22.1"
-pytest = "^6.2.5"
+pytest = "^7.0.0"
 # pytest-markdown = "^1.0.2"
 
 [tool.black]
