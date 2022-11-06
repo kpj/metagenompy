@@ -12,6 +12,8 @@ Your all-inclusive package for aggregating and visualizing metagenomic BLAST res
 $ pip install metagenompy
 ```
 
+Note that the `pygraphviz` python dependency has the `graphviz` non-python dependency. How to install it depends on your system. See the [pygraphviz docs](https://pygraphviz.github.io/documentation/stable/install.html#install) for details.
+
 
 ## Usage
 
