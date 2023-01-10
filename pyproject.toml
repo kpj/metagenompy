@@ -11,7 +11,7 @@ include = ["metagenompy/example_data/blast_result.csv.gz"]
 [tool.poetry.dependencies]
 python = "^3.8.0"
 pandas = "^1.3.5"
-networkx = "^2.6.3"
+networkx = ">=2.6.3,<4.0.0"
 pygraphviz = "^1.7"
 tqdm = "^4.62.3"
 seaborn = ">=0.11.2,<0.13.0"
