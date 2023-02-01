@@ -19,7 +19,7 @@ matplotlib = "^3.5.1"
 numpy = "^1.21.1"
 
 [tool.poetry.dev-dependencies]
-black = "^22.1"
+black = "^23.1"
 pytest = "^7.0.0"
 # pytest-markdown = "^1.0.2"
 
